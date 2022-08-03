@@ -4,17 +4,21 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Task1
 {
     static class ETL
     {
+        static object locker1 = new();
+
         public static string[] ExtractFromTxtFile(string path)
         {
-            return File.ReadLines(path).ToArray();
+            return File.ReadAllLines(path).ToArray();
         }
-
+        public static string[] ExtractFromCsvFile(string path)
+        {
+            return File.ReadLines(path).Skip(1).ToArray();
+        }
         public static string TransformData(string[] strings, string path)
         {
             List<Record> records = new();
@@ -32,8 +36,11 @@ namespace Task1
 
                 if (fields.Length < 9)
                 {
-                    Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
-                    continue;
+                    lock (locker1)
+                    {
+                        Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
+                        continue;
+                    }
                 }
 
                 string firstName = fields[0] ?? String.Empty;
@@ -51,8 +58,11 @@ namespace Task1
                  || !long.TryParse(fields[7], out accountNumber)
                  || serviceName == String.Empty)
                 {
-                    Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
-                    continue;
+                    lock (locker1)
+                    {
+                        Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
+                        continue;
+                    }
                 }
 
                 if (!records.Any(i => i.City == city))
@@ -88,7 +98,6 @@ namespace Task1
 
             return JsonConvert.SerializeObject(records, Formatting.Indented);
         }
-
         public static void LoadData(string data, string path)
         {
             File.WriteAllText(path, data);

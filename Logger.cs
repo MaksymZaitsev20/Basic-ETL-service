@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Task1
@@ -23,7 +22,7 @@ namespace Task1
                 $"parsed_lines: {ProcessedRowsCount}\n" +
                 $"found_errors: {InvalidRowsPaths.Count}\n" +
                 $"invalid_files:\n" +
-                InvalidRowsPaths.Select(i => $"\t{i}").Aggregate((i, j) => i + "\n" + j);
+                (InvalidRowsPaths.Count == 0 ? 0 : InvalidRowsPaths.Select(i => $"\t{i}").Aggregate((i, j) => i + "\n" + j));
         }
 
         public static void Reset()
