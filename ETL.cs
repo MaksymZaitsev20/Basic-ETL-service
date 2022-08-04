@@ -1,24 +1,20 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Task1
 {
-    static class ETL
+    internal class ETL
     {
-        public static string[] ExtractFromTxtFile(string path)
-        {
-            return File.ReadLines(path).ToArray();
-        }
+        private static readonly object locker = new();
 
+        public static string[] Extract(string path)
+        {
+            return path.EndsWith(".txt") ? File.ReadAllLines(path).ToArray() : File.ReadLines(path).Skip(1).ToArray();
+        }
         public static string TransformData(string[] strings, string path)
         {
             List<Record> records = new();
-            
+
             for (int i = 0; i < strings.Length; i++)
             {
                 Logger.ProcessedRowsCount++;
@@ -88,10 +84,12 @@ namespace Task1
 
             return JsonConvert.SerializeObject(records, Formatting.Indented);
         }
-
         public static void LoadData(string data, string path)
         {
-            File.WriteAllText(path, data);
+            lock (locker)
+            {
+                File.WriteAllText(path, data);
+            }
         }
     }
 }

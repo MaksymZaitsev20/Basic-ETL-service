@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 
 namespace Task1
 {
-    class Record
+    internal class Record
     {
         [JsonProperty(Order = -2)]
         public string City { get; set; }
