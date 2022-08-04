@@ -5,6 +5,7 @@ namespace Task1
     internal static class Helper
     {
         public static int outputFileCounter = 1;
+        private static readonly object locker1 = new();
 
         // Path to folder "A" (input files) from App.config key="inputFiles"
         public static string inputFiles = ConfigurationManager.AppSettings["inputFiles"];
@@ -17,7 +18,12 @@ namespace Task1
 
         public static string GetFileName()
         {
-            return $"output{outputFileCounter++}.json";
+            string fileName;
+            lock (locker1)
+            {
+                fileName = $"output{outputFileCounter++}.json";
+            }
+            return fileName;
         }
     }
 }
