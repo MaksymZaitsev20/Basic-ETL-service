@@ -5,7 +5,10 @@ namespace Task1
 {
     internal class ETL
     {
-        private static readonly object locker = new();
+        private static readonly object locker1 = new();
+        private static readonly object locker2 = new();
+        private static readonly object locker3 = new();
+        private static readonly object locker4 = new();
 
         public static string[] Extract(string path)
         {
@@ -17,7 +20,10 @@ namespace Task1
 
             for (int i = 0; i < strings.Length; i++)
             {
-                Logger.ProcessedRowsCount++;
+                lock (locker1)
+                {
+                    Logger.ProcessedRowsCount++;
+                }
 
                 var fields = strings[i].Split(',');
 
@@ -28,7 +34,10 @@ namespace Task1
 
                 if (fields.Length < 9)
                 {
-                    Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
+                    lock (locker2)
+                    {
+                        Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
+                    }
                     continue;
                 }
 
@@ -47,7 +56,10 @@ namespace Task1
                  || !long.TryParse(fields[7], out accountNumber)
                  || serviceName == String.Empty)
                 {
-                    Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
+                    lock (locker3)
+                    {
+                        Logger.InvalidRowsPaths.Add($"{path}: line {i + 1}");
+                    }
                     continue;
                 }
 
@@ -86,7 +98,7 @@ namespace Task1
         }
         public static void LoadData(string data, string path)
         {
-            lock (locker)
+            lock (locker4)
             {
                 File.WriteAllText(path, data);
             }

@@ -46,11 +46,11 @@ if (files.Count() > 0)
 
     foreach (var file in files)
     {
-        var id = Task.Run(new Action(() => 
-        
+        var id = Task.Run(new Action(() =>
         ETL.LoadData(
             ETL.TransformData(
-                ETL.Extract(file.FullName), file.FullName),
+                ETL.Extract(file.FullName),
+                file.FullName),
             Path.Combine(
                 Helper.GetOutputDirectory(),
                 Helper.GetFileName())))).Id;
@@ -71,11 +71,11 @@ MyFileSystemWatcher.MonitorDirectory(Helper.inputFiles, "*.txt");
 
 Console.ReadKey();
 
-Console.WriteLine();
+Console.WriteLine("\n\n");
 Console.WriteLine("Show the information log on console?");
 Console.Write("(y - yes, any - no) -> ");
 var consoleKey = Console.ReadKey().Key;
-Console.WriteLine();
+Console.WriteLine("\n\n");
 
 if (consoleKey == ConsoleKey.Y)
 {
