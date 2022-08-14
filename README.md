@@ -1,4 +1,3 @@
-# Radency_Internship_Task1
 A basic ETL service which allows you to process files with payment transactions that different users save in the specific folder (A) on the disk (the path must be specified in the config). Users can save files at any time and you have to process them immediately. A file can be either in TXT or CSV format (for CSV you need to skip the first line with headers) with the following content:
 <first_name: string>, <last_name: string>, <address: string>, <payment: decimal>, <date: date>, <account_number: long>, <service: string>
 
