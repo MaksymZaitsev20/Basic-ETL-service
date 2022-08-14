@@ -10,12 +10,23 @@ namespace Task1
         private static readonly object locker3 = new();
         private static readonly object locker4 = new();
 
+        /// <summary>
+        /// The method receives the path to the file and, depending on the file type, reads the data
+        /// </summary>
+        /// <param name="path">File path</param>
+        /// <returns>Array of rows (one row corresponds to one record)</returns>
         public static string[] Extract(string path)
-        {
-            return path.EndsWith(".txt") ? File.ReadAllLines(path).ToArray() : File.ReadLines(path).Skip(1).ToArray();
-        }
+            => path.EndsWith(".txt") ? File.ReadAllLines(path).ToArray() : File.ReadLines(path).Skip(1).ToArray();
+
+        /// <summary>
+        /// The method processes the received data. If the line is invalid, the information is logged
+        /// </summary>
+        /// <param name="strings">Array of rows (one row corresponds to one record)</param>
+        /// <param name="path">File path</param>
+        /// <returns>Processed data in JSON format, ready to use</returns>
         public static string TransformData(string[] strings, string path)
         {
+            // List of processed lines
             List<Record> records = new();
 
             for (int i = 0; i < strings.Length; i++)
@@ -28,9 +39,7 @@ namespace Task1
                 var fields = strings[i].Split(',');
 
                 for (int j = 0; j < fields.Length; j++)
-                {
                     fields[j] = fields[j].Trim(' ', '”', '“', '\'', '`', '"');
-                }
 
                 if (fields.Length < 9)
                 {
@@ -51,7 +60,7 @@ namespace Task1
 
                 if ((firstName == String.Empty && lastName == String.Empty)
                  || city == String.Empty
-                 || !(decimal.TryParse(fields[5], NumberStyles.Any, CultureInfo.InvariantCulture, out payment))
+                 || !decimal.TryParse(fields[5], NumberStyles.Any, CultureInfo.InvariantCulture, out payment)
                  || date == String.Empty
                  || !long.TryParse(fields[7], out accountNumber)
                  || serviceName == String.Empty)
@@ -96,6 +105,12 @@ namespace Task1
 
             return JsonConvert.SerializeObject(records, Formatting.Indented);
         }
+
+        /// <summary>
+        /// Loads received data to a file
+        /// </summary>
+        /// <param name="data">Data in JSON format</param>
+        /// <param name="path">File path</param>
         public static void LoadData(string data, string path)
         {
             lock (locker4)

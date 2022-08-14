@@ -2,54 +2,40 @@
 {
     internal static class MyFileSystemWatcher
     {
-        public static FileSystemWatcher watcher;
+        public static List<FileSystemWatcher> watchers = new();
+
         private static readonly object locker1 = new();
         private static readonly object locker2 = new();
         private static readonly object locker3 = new();
-        public static void MonitorDirectory(string path, string filter)
+
+        /// <summary>
+        /// Method to monitor directory
+        /// </summary>
+        public static void MonitorDirectory()
         {
-            #region Watchers list
-            // Checking new files in directory after app running
-
-            //List<FileSystemWatcher> watchers = new();
-
             // Files extentions for checking
-            // string[] filters = { "*.txt", "*.csv" };
+            string[] filters = { "*.txt", "*.csv" };
 
-            //foreach (var filter in filters)
-            //{
-            //    var watcher = new FileSystemWatcher(inputFiles);
+            foreach (var filter in filters)
+            {
+                var watcher = new FileSystemWatcher(Helper.inputFilesFolder);
 
-            //    //watcher.NotifyFilter = NotifyFilters.Attributes
-            //    //                     | NotifyFilters.CreationTime
-            //    //                     | NotifyFilters.DirectoryName
-            //    //                     | NotifyFilters.FileName
-            //    //                     | NotifyFilters.LastAccess
-            //    //                     | NotifyFilters.LastWrite
-            //    //                     | NotifyFilters.Security
-            //    //                     | NotifyFilters.Size;
+                watcher.Created += OnCreated;
 
-            //    watcher.Created += OnCreated;
+                watcher.Filter = filter;
+                watcher.EnableRaisingEvents = true;
 
-            //    watcher.Filter = filter;
-            //    watcher.EnableRaisingEvents = true;
-
-            //    watchers.Add(watcher);
-            //}
-            #endregion
-
-            watcher = new FileSystemWatcher(Helper.inputFiles);
-
-            watcher.Created += OnCreated;
-
-            watcher.Filter = "*.txt";
-            watcher.EnableRaisingEvents = true;
+                watchers.Add(watcher);
+            }
         }
 
+        /// <summary>
+        /// Event handler for FileSystemWatcher.Created event
+        /// </summary>
         public static void OnCreated(object sender, FileSystemEventArgs e)
         {
             // Waiting for the end of file copying
-            /// TODO: the file was not copied, but the program is already starting to process it, which causes exceptions - TO FIX IT!
+            // TODO: the file was not copied, but the program is already starting to process it, which causes exceptions - TO FIX IT!
             Thread.Sleep(25);
 
             string[] data;

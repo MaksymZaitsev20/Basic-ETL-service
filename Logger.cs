@@ -14,13 +14,11 @@
         }
 
         public static string GetData()
-        {
-            return $"parsed_files: {ProcessedFilesCount}\n" +
-                $"parsed_lines: {ProcessedRowsCount}\n" +
-                $"found_errors: {InvalidRowsPaths.Count}\n" +
-                $"invalid_files:\n" +
-                (InvalidRowsPaths.Count == 0 ? 0 : InvalidRowsPaths.Select(i => $"\t{i}").Aggregate((i, j) => i + "\n" + j));
-        }
+            => $"parsed_files: {ProcessedFilesCount}\n" +
+            $"parsed_lines: {ProcessedRowsCount}\n" +
+            $"found_errors: {InvalidRowsPaths.Count}\n" +
+            $"invalid_files:\n" +
+            (InvalidRowsPaths.Count == 0 ? 0 : InvalidRowsPaths.Select(i => $"\t{i}").Aggregate((i, j) => i + "\n" + j));
 
         public static void Reset()
         {

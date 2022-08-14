@@ -8,13 +8,11 @@ namespace Task1
         private static readonly object locker1 = new();
 
         // Path to folder "A" (input files) from App.config key="inputFiles"
-        public static string inputFiles = ConfigurationManager.AppSettings["inputFiles"];
-        public static string outputFiles = ConfigurationManager.AppSettings["outputFiles"];
+        public static string inputFilesFolder = ConfigurationManager.AppSettings["inputFiles"];
+        public static string outputFilesFolder = ConfigurationManager.AppSettings["outputFiles"];
 
         public static string GetOutputDirectory()
-        {
-            return $"{Path.Combine(outputFiles, DateTime.Today.ToShortDateString())}";
-        }
+            => $"{Path.Combine(outputFilesFolder, DateTime.Today.ToShortDateString())}";
 
         public static string GetFileName()
         {
